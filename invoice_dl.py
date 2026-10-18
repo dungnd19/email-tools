@@ -94,7 +94,8 @@ def build_query(s, d_from, d_to):
 
 def safe_filename(name):
     name = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", name).strip(" .")
-    return name[:150] or "file"
+    stem, ext = os.path.splitext(name)
+    return (stem[:150].rstrip(" .") or "file") + ext  # trim the name, never the extension
 
 
 def unique_path(p):
@@ -464,6 +465,8 @@ def selftest():
     assert not ext_allowed("logo.png", exts) and not ext_allowed("doc_scan.xlsx", exts)
     assert safe_filename('a<b>:c"/d\\e|f?g*.pdf') == "a_b__c__d_e_f_g_.pdf"
     assert safe_filename(" .. ") == "file"
+    long_name = safe_filename("x" * 300 + ".xlsx")
+    assert long_name.endswith(".xlsx") and len(long_name) == 155, long_name
     payload = {"parts": [
         {"filename": "INV-1.pdf", "body": {"attachmentId": "A"}, "headers": []},
         {"filename": "logo.png", "body": {"data": "x"},
