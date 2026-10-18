@@ -1,0 +1,7 @@
+credentials.json
+token.json
+client_secret*.json
+build/
+dist/
+*.spec
+__pycache__/
